@@ -1,0 +1,26 @@
+services:
+  label-studio-api-connector:
+    build: label-studio-api-connector/.
+    ports: 
+      - "8888:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  label-studio:
+    image: heartexlabs/label-studio:1.8.0
+    ports:
+      - "8889:8080"
+    environment:
+      - LOCAL_FILES_SERVING_ENABLED=true
+      - LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=/label-studio/data
+    volumes:
+      - ./label-studio-data:/label-studio/data:rw
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
